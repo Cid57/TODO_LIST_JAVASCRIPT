@@ -13,10 +13,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Parcourt les tâches stockées et les ajoute à leurs colonnes respectives dans l'interface utilisateur
   tasks.forEach((task) => {
-    const column = document.querySelector(`#${task.column}`);
-    if (column) {
-      const newDiv = createTaskElement(task.text, tasks);
-      column.appendChild(newDiv);
+    if (task.column) {
+      const column = document.querySelector(`#${task.column}`);
+      if (column) {
+        const newDiv = createTaskElement(task.text, tasks);
+        column.appendChild(newDiv);
+      }
     }
   });
 
@@ -27,6 +29,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Vérifie si le champ de saisie est vide et change sa couleur de fond si nécessaire
     if (!newTaskInput.value.trim()) {
       newTaskInput.style.backgroundColor = "orange";
+      return; // Ajoutez cette ligne pour sortir de la fonction si le champ est vide
     } else {
       newTaskInput.style.backgroundColor = "";
       const newDiv = createTaskElement(newTaskInput.value, tasks);
@@ -84,7 +87,7 @@ function createTaskElement(taskText, tasks) {
   newDiv.appendChild(taskTextElement);
 
   const deleteButton = document.createElement("button");
-  deleteButton.innerText = "Effacer";
+  deleteButton.innerText = "EFFACER";
   deleteButton.classList.add("effacer-tache");
   // Supprime la tâche du DOM et de localStorage quand le bouton est cliqué
   deleteButton.addEventListener("click", function () {
