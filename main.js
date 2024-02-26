@@ -77,7 +77,7 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 });
 
-// Crée un élément de tâche dans le DOM avec un bouton pour l'effacer
+// Crée un élément de tâche dans le DOM avec une icône de corbeille pour l'effacer
 function createTaskElement(taskText, tasks) {
   const newDiv = document.createElement("div");
   newDiv.classList.add("tache");
@@ -86,11 +86,10 @@ function createTaskElement(taskText, tasks) {
   taskTextElement.innerText = taskText;
   newDiv.appendChild(taskTextElement);
 
-  const deleteButton = document.createElement("button");
-  deleteButton.innerText = "EFFACER";
-  deleteButton.classList.add("effacer-tache");
-  // Supprime la tâche du DOM et de localStorage quand le bouton est cliqué
-  deleteButton.addEventListener("click", function () {
+  const deleteIcon = document.createElement("i");
+  deleteIcon.classList.add("fas", "fa-trash-alt", "effacer-tache-icon");
+  // Supprime la tâche du DOM et de localStorage quand l'icône est cliquée
+  deleteIcon.addEventListener("click", function () {
     const taskIndex = tasks.findIndex((task) => task.text === taskText);
     if (taskIndex !== -1) {
       tasks.splice(taskIndex, 1);
@@ -98,7 +97,7 @@ function createTaskElement(taskText, tasks) {
       newDiv.remove();
     }
   });
-  newDiv.appendChild(deleteButton);
+  newDiv.appendChild(deleteIcon);
 
   // Rend la tâche glissable et configure les données à transférer lors du glissement
   newDiv.setAttribute("draggable", "true");

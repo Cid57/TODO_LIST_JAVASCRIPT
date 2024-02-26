@@ -10,7 +10,6 @@
 
 body {
     background-image: url(./img/sean-oulashin-KMn4VEeEPR8-unsplash.jpg);
-    /* background-image: url(./img/jack-nagz-aL4PfTXz8S8-unsplash.jpg); */
     background-position: top;
     background-repeat: no-repeat;
     background-size: cover;
@@ -120,4 +119,13 @@ h1 {
 
 span {
     font-family: "Kode Mono", monospace;
+}
+
+.effacer-tache-icon {
+    color: red;
+    float: right;
+    font-size: 20px;
+    margin-left: 5px;
+    cursor: pointer;
+
 }
