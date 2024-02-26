@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Kode+Mono:wght@400..700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+    <title>TODO LIST</title>
+  </head>
+  <body>
+    <h1>TODO LIST</h1>
+    <div class="input-container">
+      <input type="text" id="tache" placeholder="Tache à faire" />
+      <button id="ajouter">Ajouter</button>
+    </div>
+    <div class="titre-colonne">
+      <h3>A FAIRE</h3>
+      <h3>EN COUR</h3>
+      <h3>TERMINER</h3>
+    </div>
+    <main class="container">
+      <div class="colonne" id="afaire"></div>
+      <div class="colonne" id="encours"></div>
+      <div class="colonne" id="terminer"></div>
+    </main>
+
+    <script src="main.js"></script>
+  </body>
+</html>
