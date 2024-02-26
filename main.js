@@ -1,83 +1,85 @@
-// Attend le chargement complet du DOM avant d'exécuter le script
+// Attend que le contenu du DOM soit chargé avant d'exécuter le script
 document.addEventListener("DOMContentLoaded", function () {
-  // Charge les tâches depuis localStorage ou initialise un tableau vide si rien n'est trouvé
+  // Récupère les tâches stockées dans le localStorage ou initialise un tableau vide si aucune tâche n'est trouvée
   let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
 
-  // Efface le contenu des colonnes pour prévenir la duplication des tâches
+  // Supprime tous les enfants de chaque colonne pour réinitialiser l'affichage
   document.querySelectorAll(".colonne").forEach((column) => {
-    // Supprime tous les enfants de chaque colonne pour la nettoyer
     while (column.firstChild) {
       column.removeChild(column.firstChild);
     }
   });
 
-  // Parcourt les tâches stockées et les ajoute à leurs colonnes respectives dans l'interface utilisateur
+  // Parcour chaque tâche stockée et l'ajoute à la colonne correspondante
   tasks.forEach((task) => {
+    // Vérifie si la tâche a une colonne assignée
     if (task.column) {
+      // Tente de trouver la colonne dans le DOM en utilisant l'ID stocké dans l'objet de la tâche
       const column = document.querySelector(`#${task.column}`);
+      // Si la colonne existe, crée un nouvel élément de tâche et l'ajoute à la colonne
       if (column) {
-        const newDiv = createTaskElement(task.text, tasks);
-        column.appendChild(newDiv);
+        const newDiv = createTaskElement(task.text, tasks); // Crée un élément DOM pour la tâche
+        column.appendChild(newDiv); // Ajoute l'élément créé à la colonne correspondante
       }
     }
   });
 
-  // Gère l'ajout de nouvelles tâches via le bouton "ajouter"
+  // Ajoute un écouteur d'événement sur le bouton d'ajout pour créer une nouvelle tâche
   const addButton = document.querySelector("#ajouter");
   addButton.addEventListener("click", function () {
+    // Sélectionne le champ de saisie de la nouvelle tâche
     const newTaskInput = document.querySelector("#tache");
-    // Vérifie si le champ de saisie est vide et change sa couleur de fond si nécessaire
+    // Vérifie si le champ de saisie de la nouvelle tâche est vide
     if (!newTaskInput.value.trim()) {
+      // Marque le champ de saisie en orange pour indiquer que l'entrée est invalide
       newTaskInput.style.backgroundColor = "orange";
-      return; // Ajoutez cette ligne pour sortir de la fonction si le champ est vide
+      return; // Interrompt la fonction si le champ est vide
     } else {
+      // Réinitialise la couleur de fond du champ de saisie si une valeur est présente
       newTaskInput.style.backgroundColor = "";
+      // Crée un nouvel élément de tâche avec le texte saisi
       const newDiv = createTaskElement(newTaskInput.value, tasks);
+      // Ajoute la nouvelle tâche à la colonne "À faire"
       document.querySelector("#afaire").appendChild(newDiv);
+      // Ajoute la nouvelle tâche à l'array des tâches et met à jour le localStorage
       tasks.push({ text: newTaskInput.value, column: "afaire" });
       localStorage.setItem("tasks", JSON.stringify(tasks));
+      // Efface le champ de saisie après l'ajout de la tâche
       newTaskInput.value = "";
     }
   });
 
-  // Active le glisser-déposer pour chaque colonne en écoutant deux événements : 'dragover' et 'drop'.
+  // Permet le glisser-déposer des tâches entre les colonnes
   document.querySelectorAll(".colonne").forEach((column) => {
-    // Événement 'dragover' : appelé de manière répétée lorsque l'élément glissé est au-dessus de la colonne.
-    // PreventDefault est utilisé ici pour prévenir le comportement par défaut du navigateur,
-    // qui est de ne pas permettre le dépôt.
+    // Permet à la colonne de réagir à l'événement de survol pendant le glissement
     column.addEventListener("dragover", function (event) {
-      event.preventDefault();
+      event.preventDefault(); // Empêche le comportement par défaut pour autoriser le dépôt
     });
 
-    // Événement 'drop' : appelé lorsque l'élément glissé est lâché sur la colonne.
-    // Cet événement effectue plusieurs actions pour achever le processus de glisser-déposer.
+    // Gère l'événement de dépôt sur les colonnes
     column.addEventListener("drop", function (event) {
-      // Empêche l'action par défaut pour permettre le dépôt de l'élément.
-      event.preventDefault();
-      // Récupère le texte de la tâche glissée à partir des données du transfert.
+      event.preventDefault(); // Empêche le comportement de navigation par défaut du navigateur
+      // Récupère le texte de la tâche glissée à partir des données du drag-and-drop
       const taskText = event.dataTransfer.getData("text/plain");
-      // Trouve l'index de la tâche dans le tableau 'tasks' en cherchant une correspondance de texte.
+      // Trouve l'index de la tâche dans le tableau des tâches basé sur son texte
       const taskIndex = tasks.findIndex((task) => task.text === taskText);
-      // Vérifie si la tâche a été trouvée (taskIndex !== -1).
+      // Si la tâche existe, continue le traitement
       if (taskIndex !== -1) {
-        const columnId = column.id; // L'ID de la colonne de destination.
-        // Sélectionne l'élément de tâche dans le DOM qui correspond au texte de la tâche.
+        const columnId = column.id; // ID de la colonne de dépôt
+        // Sélectionne l'élément de tâche basé sur son attribut data-text
         const taskElement = document.querySelector(`[data-text="${taskText}"]`);
-        // Vérifie si l'élément de tâche existe et n'est pas déjà dans la colonne de destination.
+        // Vérifie si l'élément n'est pas déjà dans la colonne cible
         if (taskElement && taskElement.parentNode.id !== columnId) {
-          // Met à jour la colonne de la tâche dans le tableau 'tasks'.
-          tasks[taskIndex].column = columnId;
-          // Sauvegarde le tableau 'tasks' mis à jour dans localStorage.
-          localStorage.setItem("tasks", JSON.stringify(tasks));
-          // Ajoute l'élément de tâche à la colonne de destination dans le DOM.
-          column.appendChild(taskElement);
+          tasks[taskIndex].column = columnId; // Met à jour la colonne de la tâche dans le tableau
+          localStorage.setItem("tasks", JSON.stringify(tasks)); // Sauvegarde les tâches mises à jour dans localStorage
+          column.appendChild(taskElement); // Déplace l'élément de tâche vers la colonne cible
         }
       }
     });
   });
 });
 
-// Crée un élément de tâche dans le DOM avec une icône de corbeille pour l'effacer
+// Fonction pour créer un élément de tâche avec le texte fourni
 function createTaskElement(taskText, tasks) {
   const newDiv = document.createElement("div");
   newDiv.classList.add("tache");
@@ -86,9 +88,9 @@ function createTaskElement(taskText, tasks) {
   taskTextElement.innerText = taskText;
   newDiv.appendChild(taskTextElement);
 
+  // Ajoute une icône de suppression à chaque tâche
   const deleteIcon = document.createElement("i");
   deleteIcon.classList.add("fas", "fa-trash-alt", "effacer-tache-icon");
-  // Supprime la tâche du DOM et de localStorage quand l'icône est cliquée
   deleteIcon.addEventListener("click", function () {
     const taskIndex = tasks.findIndex((task) => task.text === taskText);
     if (taskIndex !== -1) {
@@ -99,7 +101,19 @@ function createTaskElement(taskText, tasks) {
   });
   newDiv.appendChild(deleteIcon);
 
-  // Rend la tâche glissable et configure les données à transférer lors du glissement
+  // Permet de marquer une tâche comme terminée en cliquant dessus
+  newDiv.addEventListener("click", function () {
+    const columnId = newDiv.parentNode.id;
+    if (columnId === "terminer") {
+      if (newDiv.classList.contains("tache-terminee")) {
+        newDiv.classList.remove("tache-terminee");
+      } else {
+        newDiv.classList.add("tache-terminee");
+      }
+    }
+  });
+
+  // Rend la tâche glissable
   newDiv.setAttribute("draggable", "true");
   newDiv.addEventListener("dragstart", function (event) {
     event.dataTransfer.setData("text/plain", taskText);
