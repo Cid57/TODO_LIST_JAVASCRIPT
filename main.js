@@ -1,3 +1,6 @@
+// Déclaration de la variable addButton en dehors de la portée de DOMContentLoaded
+let addButton;
+
 // Attend que le contenu du DOM soit chargé avant d'exécuter le script
 document.addEventListener("DOMContentLoaded", function () {
   // Récupère les tâches stockées dans le localStorage ou initialise un tableau vide si aucune tâche n'est trouvée
@@ -24,28 +27,23 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 
+  // Sélectionne le bouton d'ajout
+  addButton = document.querySelector("#ajouter");
+
   // Ajoute un écouteur d'événement sur le bouton d'ajout pour créer une nouvelle tâche
-  const addButton = document.querySelector("#ajouter");
-  addButton.addEventListener("click", function () {
-    // Sélectionne le champ de saisie de la nouvelle tâche
-    const newTaskInput = document.querySelector("#tache");
-    // Vérifie si le champ de saisie de la nouvelle tâche est vide
-    if (!newTaskInput.value.trim()) {
-      // Marque le champ de saisie en orange pour indiquer que l'entrée est invalide
-      newTaskInput.style.backgroundColor = "orange";
-      return; // Interrompt la fonction si le champ est vide
-    } else {
-      // Réinitialise la couleur de fond du champ de saisie si une valeur est présente
-      newTaskInput.style.backgroundColor = "";
-      // Crée un nouvel élément de tâche avec le texte saisi
-      const newDiv = createTaskElement(newTaskInput.value, tasks);
-      // Ajoute la nouvelle tâche à la colonne "À faire"
-      document.querySelector("#afaire").appendChild(newDiv);
-      // Ajoute la nouvelle tâche à l'array des tâches et met à jour le localStorage
-      tasks.push({ text: newTaskInput.value, column: "afaire" });
-      localStorage.setItem("tasks", JSON.stringify(tasks));
-      // Efface le champ de saisie après l'ajout de la tâche
-      newTaskInput.value = "";
+  addButton.addEventListener("click", addTask);
+
+  // Sélectionne le champ de saisie de la nouvelle tâche
+  const newTaskInput = document.querySelector("#tache");
+
+  // Ajoute un écouteur d'événement sur la touche 'Enter' pour ajouter une nouvelle tâche
+  newTaskInput.addEventListener("keydown", function (event) {
+    // Vérifie si la touche appuyée est 'Enter' (code 13)
+    if (event.keyCode === 13) {
+      // Empêche le comportement par défaut du champ de saisie (soumettre un formulaire)
+      event.preventDefault();
+      // Déclenche l'événement de clic sur le bouton d'ajout
+      addButton.click();
     }
   });
 
@@ -121,4 +119,31 @@ function createTaskElement(taskText, tasks) {
   });
 
   return newDiv;
+}
+
+// Fonction pour ajouter une nouvelle tâche
+function addTask() {
+  // Récupère les tâches stockées dans le localStorage
+  let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+
+  // Sélectionne le champ de saisie de la nouvelle tâche
+  const newTaskInput = document.querySelector("#tache");
+  // Vérifie si le champ de saisie de la nouvelle tâche est vide
+  if (!newTaskInput.value.trim()) {
+    // Marque le champ de saisie en orange pour indiquer que l'entrée est invalide
+    newTaskInput.style.backgroundColor = "orange";
+    return; // Interrompt la fonction si le champ est vide
+  } else {
+    // Réinitialise la couleur de fond du champ de saisie si une valeur est présente
+    newTaskInput.style.backgroundColor = "";
+    // Crée un nouvel élément de tâche avec le texte saisi
+    const newDiv = createTaskElement(newTaskInput.value, tasks);
+    // Ajoute la nouvelle tâche à la colonne "À faire"
+    document.querySelector("#afaire").appendChild(newDiv);
+    // Ajoute la nouvelle tâche à l'array des tâches et met à jour le localStorage
+    tasks.push({ text: newTaskInput.value, column: "afaire" });
+    localStorage.setItem("tasks", JSON.stringify(tasks));
+    // Efface le champ de saisie après l'ajout de la tâche
+    newTaskInput.value = "";
+  }
 }
