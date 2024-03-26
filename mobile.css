@@ -1,0 +1,45 @@
+@media (max-width: 900px) {
+
+    body {
+        margin: 10px;
+    }
+
+    #tache {
+        width: auto;
+    }
+
+    #ajouter {
+        margin-top: 20px;
+    }
+
+    .titre-colonne h3 {
+        font-size: 18px;
+        padding-top: 50px;
+        text-align: center;
+
+    }
+
+    .titre-colonne {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .input-container {
+        display: flex;
+        flex-direction: column;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+}

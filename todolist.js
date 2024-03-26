@@ -146,4 +146,37 @@ function addTask() {
     // Efface le champ de saisie après l'ajout de la tâche
     newTaskInput.value = "";
   }
+
+  // Rend la tâche glissable (événements tactiles pour les appareils mobiles)
+  newDiv.addEventListener("touchstart", function (event) {
+    const touch = event.touches[0];
+    const offsetX = touch.clientX - event.target.getBoundingClientRect().left;
+    const offsetY = touch.clientY - event.target.getBoundingClientRect().top;
+    event.target.setAttribute("data-offset-x", offsetX);
+    event.target.setAttribute("data-offset-y", offsetY);
+    event.dataTransfer.setData("text/plain", taskText);
+  });
+
+  newDiv.addEventListener("touchmove", function (event) {
+    event.preventDefault(); // Empêche le comportement par défaut
+    const touch = event.touches[0];
+    const offsetX = touch.clientX - event.target.getAttribute("data-offset-x");
+    const offsetY = touch.clientY - event.target.getAttribute("data-offset-y");
+    event.target.style.left = offsetX + "px";
+    event.target.style.top = offsetY + "px";
+  });
+
+  newDiv.addEventListener("touchend", function (event) {
+    event.preventDefault(); // Empêche le comportement par défaut
+    const columnId = newDiv.parentNode.id;
+    if (columnId === "terminer") {
+      if (newDiv.classList.contains("tache-terminee")) {
+        newDiv.classList.remove("tache-terminee");
+      } else {
+        newDiv.classList.add("tache-terminee");
+      }
+    }
+    newDiv.style.left = "";
+    newDiv.style.top = "";
+  });
 }
